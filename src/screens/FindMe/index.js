@@ -1,10 +1,11 @@
 import React, { Component } from 'react';
-import { View, Text, TouchableOpacity, Alert } from 'react-native';
+import { View, Text, TouchableOpacity } from 'react-native';
+import { Constants, Location, Permissions } from 'expo';
 
 class FindMe extends Component {
 	state = {
-		latitude: null,
-		longitude: null
+		location: null,
+		errorMessage: null
 	};
 
 	findCurrentLocation = () => {
@@ -22,13 +23,31 @@ class FindMe extends Component {
 		);
 	};
 
+	findCurrentLocationAsync = async () => {
+		let { status } = await Permissions.askAsync(Permissions.LOCATION);
+
+		if (status !== 'granted') {
+			this.setState({
+				errorMessage: 'Permission to access location was denied'
+			});
+		}
+
+		let location = await Location.getCurrentPositionAsync({});
+		this.setState({ location });
+	};
+
 	render() {
+		let text = '';
+		if (this.state.errorMessage) {
+			text = this.state.errorMessage;
+		} else if (this.state.location) {
+			text = JSON.stringify(this.state.location);
+		}
 		return (
 			<View>
-				<TouchableOpacity onPress={this.findCurrentLocation}>
+				<TouchableOpacity onPress={this.findCurrentLocationAsync}>
 					<Text> Where am I? </Text>
-					<Text>{this.state.longitude}</Text>
-					<Text>{this.state.latitude}</Text>
+					<Text>{text}</Text>
 				</TouchableOpacity>
 			</View>
 		);
