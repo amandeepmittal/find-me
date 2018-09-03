@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import FindMe from './src/screens/FindMe';
 
 export default class App extends React.Component {
